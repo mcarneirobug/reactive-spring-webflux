@@ -190,4 +190,30 @@ class FluxAndMonoGeneratorServiceTest {
                .expectNext("A", "B", "C", "D", "E", "F")
                .verifyComplete();
     }
+
+    @Test
+    void namesFluxMerge() {
+        // given
+
+        // when
+        var mergedFlux = service.namesFluxMerge();
+
+        // then
+        StepVerifier.create(mergedFlux)
+               .expectNext("A", "D", "B", "E", "C", "F")
+               .verifyComplete();
+    }
+
+    @Test
+    void namesFluxMergeSequential() {
+        // given
+
+        // when
+        var mergedFluxSequential = service.namesFluxMergeSequential();
+
+        // then
+        StepVerifier.create(mergedFluxSequential)
+                .expectNext("A", "B", "C", "D", "E", "F")
+                .verifyComplete();
+    }
 }

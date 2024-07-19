@@ -127,6 +127,51 @@ public class FluxAndMonoGeneratorService {
     }
 
     /*
+     * We are merge them together interleaved ["A", "D", "B", "E", "C", "F"]
+     */
+    public Flux<String> namesFluxMerge() {
+        var abcFlux = Flux.just("A", "B", "C")
+                .delayElements(Duration.ofMillis(100));
+
+        var defFlux = Flux.just("D", "E", "F")
+                .delayElements(Duration.ofMillis(125));
+
+        return Flux.merge(abcFlux, defFlux).log();
+    }
+
+    public Flux<String> namesFluxMergeWith() {
+        var abcFlux = Flux.just("A", "B", "C")
+                .delayElements(Duration.ofMillis(100));
+
+        var defFlux = Flux.just("D", "E", "F")
+                .delayElements(Duration.ofMillis(125));
+
+        return abcFlux.mergeWith(defFlux).log();
+    }
+
+    public Flux<String> namesMonoMergeWith() {
+        var aMono = Mono.just("A");
+        var bMono = Mono.just("B");
+
+        return aMono.mergeWith(bMono).log(); // A, B
+    }
+
+    /*
+     * This version of the method merges fluxes in a sequential manner,
+     * which means it waits for one flux to complete before starting the next one.
+     * This is useful when dealing with a large number of items.
+     */
+    public Flux<String> namesFluxMergeSequential() {
+        var abcFlux = Flux.just("A", "B", "C")
+                .delayElements(Duration.ofMillis(100));
+
+        var defFlux = Flux.just("D", "E", "F")
+                .delayElements(Duration.ofMillis(125));
+
+        return Flux.mergeSequential(abcFlux, defFlux).log();
+    }
+
+    /*
      * This version of the method includes a delay of a random amount of time, simulating network latency.
      * FlatMap used for asynchronous processing, and made One to N transformation.
      * Not preserve the ordering sequencing of elements.

@@ -1,9 +1,8 @@
 package com.learnreactiveprogramming.service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import reactor.test.StepVerifier;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class FluxAndMonoGeneratorServiceTest {
 
@@ -44,6 +43,20 @@ class FluxAndMonoGeneratorServiceTest {
         // then
         StepVerifier.create(namesFlux)
                 .expectNext("JOHN", "ALICE", "BOB", "CHARLIE", "DAVID")
+                .verifyComplete();
+    }
+
+    @Test
+    @DisplayName("NamesFlux should not change when mapping to uppercase")
+    void namesFluxImmutability() {
+        // given
+
+        // when
+        var namesFlux = service.namesFluxImmutability();
+
+        // then
+        StepVerifier.create(namesFlux)
+                .expectNext("John", "Alice", "Bob", "Charlie", "David")
                 .verifyComplete();
     }
 }

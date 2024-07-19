@@ -149,4 +149,32 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNext("C", "H", "A", "R", "L", "I", "E")
                 .verifyComplete();
     }
+
+    @Test
+    void namesFluxWithTransformWhenEmptyValues() {
+        // given
+        int stringLength = 8;
+
+        // when
+        var namesFlux = service.namesFluxWithTransform(stringLength);
+
+        // then
+        StepVerifier.create(namesFlux)
+                .expectNext("default")
+                .verifyComplete();
+    }
+
+    @Test
+    void namesFluxWithTransformWhenUseSwitchIfEmptyValues() {
+        // given
+        int stringLength = 7;
+
+        // when
+        var namesFlux = service.namesFluxWithTransformSwitchIfEmpty(stringLength);
+
+        // then
+        StepVerifier.create(namesFlux)
+                .expectNext("D", "E", "F", "A", "U", "L", "T")
+                .verifyComplete();
+    }
 }

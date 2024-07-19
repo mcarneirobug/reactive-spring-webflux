@@ -81,6 +81,23 @@ public class FluxAndMonoGeneratorService {
         return namesFlux()
                 .transform(filterMap)
                 .flatMap(this::splitString)
+                .defaultIfEmpty("default")
+                .log();
+    }
+
+    public Flux<String> namesFluxWithTransformSwitchIfEmpty(int stringLength) {
+        UnaryOperator<Flux<String>> filterMap = name -> name.map(String::toUpperCase)
+                .filter(s -> s.length() > stringLength)
+                .flatMap(this::splitString);
+
+        var defaultFlux = Flux.just("default")
+                .map(String::toUpperCase)
+                .filter(s ->  s.startsWith("DE"))
+                .flatMap(this::splitString); // "D", "E", "F", "A", "U", "L", "T"
+
+        return namesFlux()
+                .transform(filterMap)
+                .switchIfEmpty(defaultFlux)
                 .log();
     }
 

@@ -102,6 +102,31 @@ public class FluxAndMonoGeneratorService {
     }
 
     /*
+     * In the real scenario we received data from a remote server/database,
+     * and we want to combine these results into a single stream.
+     */
+    public Flux<String> namesFluxWithConcat() {
+        var abcFlux = Flux.just("A", "B", "C");
+        var defFlux = Flux.just("D", "E", "F");
+
+        return Flux.concat(abcFlux, defFlux).log();
+    }
+
+    public Flux<String> namesFluxConcatWith() {
+        var abcFlux = Flux.just("A", "B", "C");
+        var defFlux = Flux.just("D", "E", "F");
+
+        return abcFlux.concatWith(defFlux).log();
+    }
+
+    public Flux<String> namesFluxConcatWithMono() {
+        var aMono = Mono.just("A");
+        var bMono = Mono.just("B");
+
+        return aMono.concatWith(bMono).log(); // A, B
+    }
+
+    /*
      * This version of the method includes a delay of a random amount of time, simulating network latency.
      * FlatMap used for asynchronous processing, and made One to N transformation.
      * Not preserve the ordering sequencing of elements.

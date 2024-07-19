@@ -101,4 +101,22 @@ class FluxAndMonoGeneratorServiceTest {
                 .expectNextCount(17)
                 .verifyComplete();
     }
+
+    @Test
+    void namesFluxWithConcatMapAsync() {
+        // given
+        int stringLength = 4;
+
+        // when
+        var namesFlux = service.namesFluxWithConcatMapAsync(stringLength);
+
+        // then
+        StepVerifier.create(namesFlux)
+                .expectNextCount(17)
+                .verifyComplete();
+
+        StepVerifier.create(namesFlux)
+                .expectNext("A", "L", "I", "C", "E", "C", "H", "A", "R", "L", "I", "E", "D", "A", "V", "I", "D")
+                .verifyComplete();
+    }
 }

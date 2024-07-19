@@ -54,12 +54,25 @@ public class FluxAndMonoGeneratorService {
     /*
      * This version of the method includes a delay of a random amount of time, simulating network latency.
      * FlatMap used for asynchronous processing, and made One to N transformation.
+     * Not preserve the ordering sequencing of elements.
      */
     public Flux<String> namesFluxWithFlatMapAsync(int stringLength) {
         return namesFlux()
                 .map(String::toUpperCase)
                 .filter(name -> name.length() > stringLength)
                 .flatMap(this::splitStringWithDelay)
+                .log();
+    }
+
+    /*
+     * Preserve the ordering sequencing of elements.
+     * Take a plenty of time to process all elements rather than the flatMap version.
+     */
+    public Flux<String> namesFluxWithConcatMapAsync(int stringLength) {
+        return namesFlux()
+                .map(String::toUpperCase)
+                .filter(name -> name.length() > stringLength)
+                .concatMap(this::splitStringWithDelay)
                 .log();
     }
 

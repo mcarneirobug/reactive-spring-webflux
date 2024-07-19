@@ -6,6 +6,9 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 public class FluxAndMonoGeneratorService {
 
@@ -19,6 +22,21 @@ public class FluxAndMonoGeneratorService {
 
     public Mono<String> nameMono() {
         return Mono.just(names.get(0));
+    }
+
+    public Mono<List<String>> namesMono_flatMap(int stringLength) {
+        return Mono.just("alex")
+                .map(String::toUpperCase)
+                .filter(name -> name.length() > stringLength)
+                .flatMap(this::splitStringMono)
+                .log(); // Mono<List of A, L, E, X>
+    }
+
+    private Mono<List<String>> splitStringMono(String s) {
+        var charList = s.chars()
+                .mapToObj(Character::toString) // convert each char code to a String
+                .collect(Collectors.toList());
+        return Mono.just(charList);
     }
 
     public Flux<String> namesFluxWithMap() {
@@ -47,6 +65,21 @@ public class FluxAndMonoGeneratorService {
         return namesFlux()
                 .map(String::toUpperCase)
                 .filter(name -> name.length() > stringLength)
+                .flatMap(this::splitString)
+                .log();
+    }
+
+    /*
+     * This version of the method uses a transform function
+     * can extract a functionality and assign that functionality to variable.
+     * Is being used across our project, then just use transform operator along with the function.
+     */
+    public Flux<String> namesFluxWithTransform(int stringLength) {
+        UnaryOperator<Flux<String>> filterMap = name -> name.map(String::toUpperCase)
+                .filter(s -> s.length() > stringLength);
+
+        return namesFlux()
+                .transform(filterMap)
                 .flatMap(this::splitString)
                 .log();
     }

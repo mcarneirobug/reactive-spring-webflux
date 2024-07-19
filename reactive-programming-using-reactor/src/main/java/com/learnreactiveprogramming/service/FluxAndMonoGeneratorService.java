@@ -32,6 +32,14 @@ public class FluxAndMonoGeneratorService {
         return namesFluxImmutability;
     }
 
+    public Flux<String> namesFluxWithFilter(int stringLength) {
+        return namesFlux()
+                .map(String::toUpperCase)
+                .filter(name -> name.length() > stringLength)
+                .map(name -> name.length() + "-" + name)
+                .log();
+    }
+
     public static void main(String[] args) {
         FluxAndMonoGeneratorService service = new FluxAndMonoGeneratorService();
 

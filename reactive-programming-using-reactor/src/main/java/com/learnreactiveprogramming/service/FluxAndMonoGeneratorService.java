@@ -7,13 +7,21 @@ import java.util.List;
 
 public class FluxAndMonoGeneratorService {
 
+    private static final List<String> names = List.of("John", "Alice", "Bob", "Charlie", "David");
+
     public Flux<String> namesFlux() {
-        return Flux.fromIterable(List.of("John", "Alice", "Bob", "Charlie", "David"))
+        return Flux.fromIterable(names)
                 .log();
     }
 
     public Mono<String> nameMono() {
-        return Mono.just("John");
+        return Mono.just(names.get(0));
+    }
+
+    public Flux<String> namesFluxWithMap() {
+        return namesFlux()
+               .map(String::toUpperCase)
+                .log();
     }
 
     public static void main(String[] args) {
